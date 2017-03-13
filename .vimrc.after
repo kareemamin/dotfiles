@@ -1,0 +1,300 @@
+  " Pathogen
+  " --------
+
+  filetype off                    " Avoid a Vim/Pathogen bug
+  call pathogen#helptags()
+  call pathogen#infect('bundle/{}')
+
+set nocompatible                " Don't maintain compatibility with vi
+syntax on                       " Highlight known syntaxes
+filetype plugin indent on
+
+" Configuration
+" -------------
+
+  colorscheme solarized
+  set background=dark
+  set guifont=Inconsolata:h24     " Huge and not always there ...
+  set guifont=Monaco:h16
+  set guioptions-=T               " Remove GUI toolbar
+  set visualbell                  " Suppress audio/visual error bell
+  set notimeout                   " No command timeout
+  set showcmd                     " Show typed command prefixes while waiting for operator
+
+  set expandtab                   " Use soft tabs
+  set tabstop=2                   " Tab settings
+  set autoindent
+  set smarttab                    " Use shiftwidth to tab at line beginning
+  set shiftwidth=2                " Width of autoindent
+  set number                      " Line numbers
+  set nowrap                      " No wrapping
+  set ignorecase                  " Ignore case
+  set smartcase                   " ... unless uppercase characters are involved
+
+  set list                        " Show whitespace
+  set listchars=tab:▸\ ,trail:¬   " UTF-8 characters for trailing whitespace
+  set virtualedit=onemore         " Cursor can display one character past line
+  set showmatch                   " Show matching brackets
+  set hidden                      " Allow hidden, unsaved buffers
+  set splitright                  " Add new windows towards the right
+  set splitbelow                  " ... and bottom
+  set wildmode=list:longest       " Bash-like tab completion
+  set scrolloff=3                 " Scroll when the cursor is 3 lines from edge
+  set cursorline                  " Highlight current line
+  set laststatus=2                " Always show statusline
+  set statusline=
+  set statusline+=\ %t\ \|\ len:\ \%L\ \|\ type:\ %Y\ \|\ ascii:\ \%03.3b\ \|\ hex:\ %2.2B\ \|\ line:\ \%2l
+
+  set incsearch                   " Incremental search
+  set history=1024                " History size
+
+  set autoread                    " No prompt for file changes outside Vim
+  set noswapfile                  " No swap file
+  set nobackup                    " No backup file
+  set nowritebackup
+  " set clipboard=unnamed           " Copy to clipboard
+
+  set autowriteall                " Save when focus is lost
+  autocmd FocusLost * silent! wall
+
+  " Keybindings
+  " -----------
+
+  let mapleader = ","
+  let maplocalleader = ";"
+
+  " kj - The intuitive way to get out of insert mode
+  imap kj         <Esc>
+
+  " Make Y consistent with D and C
+  map Y           y$
+
+  " Yank text to the OS X clipboard
+  noremap <leader>y "*y
+  noremap <leader>yy "*Y
+
+  " Preserve indentation while pasting text from the OS X clipboard
+  noremap <leader>p :set paste<CR>:put  *<CR>:set nopaste<CR>
+
+  " Indent/unindent visual mode selection
+  vmap <tab>      >gv
+  vmap <S-tab>    <gv
+
+  " Search
+  nmap <leader>s  :%s/
+  vmap <leader>s  :s/
+
+  " Flip words
+  nnoremap <leader>f :Flip 
+
+  " Delete surrounding block (if statements, while, etc)
+  nnoremap dsB diB]pkdk
+
+  " Delete function
+  nmap <silent> dsf ds)db
+
+  " Change increment and decrement
+  :nnoremap <C-b> <C-a>
+
+  " Toggle highlight search
+  map <Leader>hh :set hlsearch!<CR>
+  imap <Leader>hh <ESC>:set hlsearch!<CR>a
+
+  " Split screen
+  map <leader>v   :vsp<CR>
+  map <leader>hs   :split<CR>
+
+  " use clay
+  map <leader>ct :! clay test<CR>
+  map <leader>cd :! clay deploy<CR>
+  map <leader>cr :! clay run<CR>
+  map <leader>cl :! clay logs<CR>
+
+
+  " Shell commands
+  map <C-c> :!
+
+  " Move between screens
+  nmap <C-j>      <C-w>j
+  nmap <C-k>      <C-w>k
+  nmap <C-h>      <C-w>h
+  nmap <C-l>      <C-w>l
+
+  " Open .vimrc file in new tab. Think Command + , [Preferences...] but with Shift.
+map <leader><       :tabedit ~/.vimrc.after<CR>
+
+" Reload .vimrc
+map <leader>rv  :source ~/.vimrc.after<CR>
+" Remove highlighting post-search
+nmap <leader>h  :nohls<CR>
+
+" Auto-indent whole file
+nmap <leader>=  gg=G``
+map <silent> <F7> gg=G`` :delmarks z<CR>:echo "Reformatted."<CR>
+
+" Jump to a new line in insert mode
+imap <C-CR>     <Esc>o
+
+" Fast scrolling
+nnoremap <C-e>  3<C-e>
+nnoremap <C-y>  3<C-y>
+
+" File tree browser
+map \           :NERDTreeToggle<CR>
+
+" File tree browser showing current file - pipe (shift-backslash)
+map \|          :NERDTreeFind<CR>
+
+" Previous/next quickfix file listings (e.g. search results)
+map <S-Down>  :cn<CR>
+map <S-Up>    :cp<CR>
+
+" Previous/next buffers
+map <S-Left>  :bp<CR>
+map <S-Right> :bn<CR>
+
+" switchback commands
+map <leader>e   :e#<CR>
+
+" Rails Navigation
+map <leader>A   :A<CR>
+map <leader>R   :R<CR>
+
+" Insert Mode Helpers
+inoremap OO <ESC>O
+inoremap II <ESC>^i
+inoremap AA <ESC>$i
+
+" CtrplP-Better than Command-t
+nnoremap <silent> <leader>t   :CtrlPClearCache<CR>:CtrlP<Esc>
+
+" Re-index ctags, including Gem home
+map <leader>rt  :!/usr/local/bin/ctags -R --exclude=.git --exclude=log * `rvm gemhome`/*<CR>
+" Prevents generating of rdoc. This will prevent tags file to be generated
+" map <leader>T   :!rdoc -f tags -o tags * `rvm gemhome` --exclude=.git --exclude=log
+
+" Git blame
+map <leader>gb   :Gblame<CR>
+
+" Comment/uncomment lines
+map <leader>/   :TComment<cr>
+
+" Copy current file path to system pasteboard
+map <silent> <D-C> :let @* = expand("%")<CR>:echo "Copied: ".expand("%")<CR>
+
+" Disable middle mouse button, F1
+map <MiddleMouse>   <Nop>
+imap <MiddleMouse>  <Nop>
+map <F1>            <Nop>
+imap <F1>           <Nop>
+
+" Zooming
+map <leader>g :ZoomWin<CR>
+
+vnoremap <leader>nar :NarrowRegion<CR>
+
+" Multiple cursors
+let g:multi_cursor_quit_key='<Esc>'
+
+
+" map <Leader><Leader> :!
+
+
+" Omnicomplete Shortcut
+" imap <tab> <c-x><c-o>
+let g:SuperTabContextDefaultCompletionType = "<C-X><C-O>"
+let g:SuperTabDefaultCompletionType = "context"
+set completeopt=longest,menuone
+" Pad comment delimeters with spaces
+let NERDSpaceDelims = 1
+
+
+" Small default width for NERDTree pane
+let g:NERDTreeWinSize = 20
+
+" Small default height for CommandT
+let g:CommandTMaxHeight=20
+
+" Change working directory if you change root directories
+let g:NERDTreeChDirMode=2
+
+let g:syntastic_javascript_checkers = ['eslint']
+let g:jsx_ext_required = 0 " Allow JSX in normal JS files
+"
+
+set wildignore+=**/.git,**/bower_components/*,**/node_modules/**,**/build/
+
+" Find current word in command mode
+function! AckGrep()
+  let command = "ack ".expand("<cword>")
+  cexpr system(command)
+  cw
+endfunction
+
+function! AckVisual()
+  normal gv"xy
+  let command = "ack ".@x
+  cexpr system(command)
+  cw
+endfunction
+
+
+
+
+" AckGrep current word
+map <leader>a :call AckGrep()<CR>
+" AckVisual current selection
+vmap <leader>a :call AckVisual()<CR>
+
+" Whitespace & highlighting & language-specific config
+" ----------------------------------------------------
+
+" Strip trailing whitespace for code files on save
+" C family
+autocmd BufWritePre *.m,*.h,*.c,*.mm,*.cpp,*.hpp :%s/\s\+$//e
+
+" Ruby, Rails
+autocmd BufWritePre *.rb,*.yml,*.js,*.json,*.css,*.less,*.sass,*.html,*.xml,*.erb,*.haml,*.feature :%s/\s\+$//e
+au BufRead,BufNewFile *.thor set filetype=ruby
+au BufRead,BufNewFile *.god set filetype=ruby
+au BufRead,BufNewFile Gemfile* set filetype=ruby
+au BufRead,BufNewFile Vagrantfile set filetype=ruby
+au BufRead,BufNewFile soloistrc set filetype=ruby
+
+" Java, PHP
+autocmd BufWritePre *.java,*.php :%s/\s\+$//e
+
+" Highlight JSON files as javascript
+autocmd BufRead,BufNewFile *.json set filetype=javascript
+
+" Highlight Jasmine fixture files as HTML
+autocmd BufRead,BufNewFile *.jasmine_fixture set filetype=html
+
+" Consider question/exclamation marks to be part of a Vim word.
+autocmd FileType ruby set iskeyword=@,48-57,_,?,!,192-255
+autocmd FileType scss set iskeyword=@,48-57,_,-,?,!,192-255
+
+" Insert ' => '
+autocmd FileType ruby imap  <Space>=><Space>
+
+
+filetype plugin on
+set omnifunc=syntaxcomplete#Complete
+
+" .vimrc.local Options
+" --------------------
+"
+" No GUI tab bar
+" set guioptions-=e
+
+" No scrollbars
+" set guioptions-=rL
+
+" 256 colors
+" set t_Co=256
+
+" Change background color in insert mode
+" let g:insert_mode_background_color = "#18434E"
+
+" Machine-local vim settings - keep this at the end
+silent! source ~/.vimrc.local
